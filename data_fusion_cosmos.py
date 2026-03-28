@@ -86,12 +86,32 @@ def feed_to_cosmos(world_states, model_id="embedl/Cosmos-Reason2-2B-W4A16", csv_
     print(f"Loading model '{model_id}'...")
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     # Load quantized model - make sure accelerate and bitsandbytes are installed if needed
-    model = AutoModelForCausalLM.from_pretrained(
-        model_id, 
-        device_map="auto", 
-        trust_remote_code=True,
-        torch_dtype=torch.float16
-    )
+    try:
+        model = AutoModelForCausalLM.from_pretrained(
+            model_id, 
+            device_map="auto", 
+            trust_remote_code=True,
+            torch_dtype=torch.float16
+        )
+    except ValueError:
+        try:
+            from transformers import AutoModelForVision2Seq
+            print("Falling back to AutoModelForVision2Seq...")
+            model = AutoModelForVision2Seq.from_pretrained(
+                model_id, 
+                device_map="auto", 
+                trust_remote_code=True,
+                torch_dtype=torch.float16
+            )
+        except ValueError:
+            from transformers import Qwen3VLForConditionalGeneration
+            print("Falling back to Qwen3VLForConditionalGeneration...")
+            model = Qwen3VLForConditionalGeneration.from_pretrained(
+                model_id, 
+                device_map="auto", 
+                trust_remote_code=True,
+                torch_dtype=torch.float16
+            )
 
     # Initialize CSV logging
     file_exists = os.path.isfile(csv_log_file)

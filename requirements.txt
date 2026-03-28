@@ -1,0 +1,4 @@
+torch>=2.0.0
+transformers>=4.38.0
+accelerate>=0.27.2
+autoawq>=0.1.8

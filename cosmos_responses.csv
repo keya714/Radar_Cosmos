@@ -1,0 +1,69 @@
+Timestamp,Time Window,Prompt,Output,Latency (s)
+2026-03-28 00:55:59,1620115864.5,"Time window: 1620115864.5
+Ownship Position: [-70.79069917272692, -422.0966866450926]
+Sensor Data:
+- Radar: 0 readings detected. Data: []
+- LiDAR: 0 readings detected. Data: []
+- EO (Electro-Optical camera): 1 readings detected. Data: [-1.8848547808599598]
+- IR (Infrared / thermal camera): 1 readings detected. Data: [-1.7878541342692142]
+
+What is the current world state based on this fusion? Are there tracked objects?","Based on the fusion of radar, LiDAR, EO, and IR data, the current world state is largely devoid of tracked objects. The radar and LiDAR systems report no detections, with both systems reporting empty data arrays. The EO (electro-optical) and IR (thermal) cameras report a single detection each, but these detections are represented by negative numerical values, which may indicate sensor noise or ambiguity. The EO detection value (-1.8848547808599598) and IR detection value (-1.7878541342692142) suggest potential anomalies or inconsistencies, possibly due to sensor limitations or environmental factors. Overall, while there are detections reported by EO and IR, the lack of radar and LiDAR detections suggests a sparse or uncertain environment state.",10.0938
+2026-03-28 00:56:08,1620115865.0,"Time window: 1620115865.0
+Ownship Position: [-70.82396200356675, -422.129621709569]
+Sensor Data:
+- Radar: 0 readings detected. Data: []
+- LiDAR: 2 readings detected. Data: [[-44.13060500048249, -95.48916365526765], [-180.79862740548003, -206.93882515938628]]
+- EO (Electro-Optical camera): 3 readings detected. Data: [-1.88424731787149, -1.8843236588211132, -1.881839251119415]
+- IR (Infrared / thermal camera): 2 readings detected. Data: [-1.78718763875637, -1.7846756600506444]
+
+What is the current world state based on this fusion? Are there tracked objects?","The world state comprises multiple objects tracked across different sensors:
+
+- Radar Detection: No radar detections are observed during this time window.
+- LiDAR Detection: Two LiDAR detections are identified, with coordinates approximately [-44.13, -95.49] and [-180.8, -206.94]. These points may represent nearby objects in the environment.
+- EO/IR Detection: Three EO/IR detections are present, with values approximately [-1.88, -1.79]. These values likely correspond to thermal signatures of objects in the scene.
+
+Although there is no radar detection, the LiDAR and EO/IR detections suggest the presence of several objects in the vicinity of the vehicle. The LiDAR detections may represent nearby objects, while the EO/IR detections could correspond to thermal signatures of objects in the scene.",9.5281
+2026-03-28 00:56:16,1620115865.5,"Time window: 1620115865.5
+Ownship Position: [-70.99195313915288, -422.30724155885974]
+Sensor Data:
+- Radar: 0 readings detected. Data: []
+- LiDAR: 0 readings detected. Data: []
+- EO (Electro-Optical camera): 1 readings detected. Data: [-1.8799838008307699]
+- IR (Infrared / thermal camera): 4 readings detected. Data: [-1.776609199135303, -1.7738722674885057, -1.7689920817178568, -1.9153447685304361]
+
+What is the current world state based on this fusion? Are there tracked objects?","The current world state is dominated by uncertainty due to the absence of radar and LiDAR detections. The Electro-Optical (EO) and Infrared (IR) sensors provide conflicting or uncertain data regarding the existence of an object at [-1.8799838008307699]. The IR readings suggest a single target with varying confidence levels, while EO data may represent the same object but with reduced certainty. Given the IR readings' inconsistency and the lack of radar/LiDAR confirmation, it is uncertain whether an object exists in this frame. The fusion of these sensors highlights ambiguity, with IR data potentially being more reliable despite its conflicting readings.",7.4680
+2026-03-28 00:56:43,1620115866.0,"Time window: 1620115866.0
+Ownship Position: [-71.19404388746061, -422.45976828274434]
+Sensor Data:
+- Radar: 0 readings detected. Data: []
+- LiDAR: 0 readings detected. Data: []
+- EO (Electro-Optical camera): 3 readings detected. Data: [-1.8702962496500122, -1.868703144613576, -1.8695329875026119]
+- IR (Infrared / thermal camera): 4 readings detected. Data: [-1.7650843651477433, -1.9121043327020808, -1.7646761074911863, -1.9116874471458252]
+
+What is the current world state based on this fusion? Are there tracked objects?","Based on the fusion of radar, LiDAR, EO, and IR data, the current world state is as follows:
+
+**Object Tracking:**
+- **Object Instance ID 0:** Detected via IR/thermal imaging, positioned at [-1.7650843651477433, -1.9121043327020808, -1.7646761074911863, -1.9116874471458252]. Estimated coordinates are approximately [-1.87, -1.87], with a size estimate of approximately 1 meter.
+- **Object Instance ID 1:** Detected via IR/thermal imaging, positioned at [-1.7650843651477433, -1.9121043327020808, -1.7646761074911863, -1.9116874471458252]. Estimated coordinates are approximately [-1.87, -1.87], with a size estimate of approximately 1 meter.
+- **Object Instance ID 2:** Detected via IR/thermal imaging, positioned at [-1.7650843651477433, -1.9121043327020808, -1.7646761074911863, -1.9116874471458252]. Estimated coordinates are approximately [-1.87, -1.87], with a size estimate of approximately 1 meter.
+
+**Sensor Observations:**
+- **Radar:** No detections reported.
+- **LiDAR:** No detections reported.
+- **EO (Electro-Optical Camera):** Three detections reported, all related to the IR/thermal imaging data.
+- **IR (Infrared/Thermal Camera):** Four detections reported, all related to the IR/thermal imaging data.
+
+**Environmental Context:**
+- **Sky/Fog/Ground/Rollover Notes:** Not applicable, as the data provided does not mention these elements.
+
+**Summary:**
+The current",27.4764
+2026-03-28 00:56:47,1620115866.5,"Time window: 1620115866.5
+Ownship Position: [-71.34318716471157, -422.5485283378771]
+Sensor Data:
+- Radar: 0 readings detected. Data: []
+- LiDAR: 2 readings detected. Data: [-40.50388992385626, -176.5047540096739]
+- EO (Electro-Optical camera): 7 readings detected. Data: [-1.7437297360370583, -1.8653464917162488, -1.868643665173381, -1.7412347394497607, -1.8712971648322632, -1.7462179440918637, -1.8699586941656459]
+- IR (Infrared / thermal camera): 5 readings detected. Data: [-1.7707133249866063, -1.7771888345498141, -1.9185576488479736, -1.7775146201202385, -1.915442944373995]
+
+What is the current world state based on this fusion? Are there tracked objects?","Based on the fusion of radar, LiDAR, EO, and IR data, the environment is dominated by a large, flat, dark surface with no discernible objects apart from the sensor readings. There are no tracked objects present in the scene. The sensor readings indicate a uniform distribution across the field of view, with no specific object types being detected apart from the sensor readings themselves.",4.2601

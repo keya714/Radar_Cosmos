@@ -84,34 +84,19 @@ def feed_to_cosmos(world_states, model_id="embedl/Cosmos-Reason2-2B-W4A16", csv_
         return
 
     print(f"Loading model '{model_id}'...")
-    tokenizer = AutoTokenizer.from_pretrained(model_id)
-    # Load quantized model - make sure accelerate and bitsandbytes are installed if needed
-    try:
-        model = AutoModelForCausalLM.from_pretrained(
-            model_id, 
-            device_map="auto", 
-            trust_remote_code=True,
-            torch_dtype=torch.float16
-        )
-    except ValueError:
-        try:
-            from transformers import AutoModelForVision2Seq
-            print("Falling back to AutoModelForVision2Seq...")
-            model = AutoModelForVision2Seq.from_pretrained(
-                model_id, 
-                device_map="auto", 
-                trust_remote_code=True,
-                torch_dtype=torch.float16
-            )
-        except ValueError:
-            from transformers import Qwen3VLForConditionalGeneration
-            print("Falling back to Qwen3VLForConditionalGeneration...")
-            model = Qwen3VLForConditionalGeneration.from_pretrained(
-                model_id, 
-                device_map="auto", 
-                trust_remote_code=True,
-                torch_dtype=torch.float16
-            )
+    import transformers
+    
+    # Load model exactly as per Cosmos documentation
+    model = transformers.Qwen3VLForConditionalGeneration.from_pretrained(
+        model_id,
+        device_map="auto",
+        attn_implementation="sdpa",
+        torch_dtype=torch.float16,
+        trust_remote_code=True
+    )
+    
+    # Load properly as Qwen3VL Processor
+    processor = transformers.AutoProcessor.from_pretrained(model_id, trust_remote_code=True)
 
     # Initialize CSV logging
     file_exists = os.path.isfile(csv_log_file)
@@ -124,38 +109,60 @@ def feed_to_cosmos(world_states, model_id="embedl/Cosmos-Reason2-2B-W4A16", csv_
         for i, state in enumerate(world_states[:5]): # Limit to first 5 for demonstration
             print(f"\n================ Processing Time Window {i+1} ================")
             
-            prompt = (
-                "<|im_start|>system\n"
-                "You are an AI tracking system analyzing sensor fusion data (Radar, LiDAR, EO, IR). "
-                "Your job is to analyze the data, track targets, and determine the current world state.<|im_end|>\n"
-            )
-            
             user_msg = f"Time window: {state['time_window']}\nOwnship Position: {state['ownshipPosition']}\nSensor Data:\n"
             for s_name, s_data in state["sensors"].items():
                 user_msg += f"- {s_name}: {len(s_data)} readings detected. Data: {s_data}\n"
             user_msg += "\nWhat is the current world state based on this fusion? Are there tracked objects?"
 
-            prompt += f"<|im_start|>user\n{user_msg}<|im_end|>\n<|im_start|>assistant\n"
-            
-            # Tokenize
-            inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+            # Apply chat template structure specified in docs
+            messages = [
+                {
+                    "role": "system",
+                    "content": [
+                        {"type": "text", "text": "You are an AI tracking system analyzing sensor fusion data (Radar, LiDAR, EO, IR). Your job is to analyze the data, track targets, and determine the current world state."}
+                    ],
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": user_msg},
+                    ],
+                },
+            ]
+
+            # Process inputs via processor
+            inputs = processor.apply_chat_template(
+                messages,
+                tokenize=True,
+                add_generation_prompt=True,
+                return_dict=True,
+                return_tensors="pt",
+                truncation=False,
+            )
+            inputs = inputs.to(model.device)
             
             # Start timer
             start_time = time.time()
             
-            # Generate
-            outputs = model.generate(
-                **inputs, 
-                max_new_tokens=256,
-                temperature=0.3, # Low temperature for more deterministic analysis
-                do_sample=True,
-                pad_token_id=tokenizer.eos_token_id
-            )
+            # Run inference
+            generated_ids = model.generate(**inputs, max_new_tokens=512)
             
             # End timer
             latency = time.time() - start_time
             
-            response = tokenizer.decode(outputs[0][inputs.input_ids.shape[-1]:], skip_special_tokens=True)
+            # Trim the generated ids to only contain the output sequence
+            generated_ids_trimmed = [
+                out_ids[len(in_ids) :]
+                for in_ids, out_ids in zip(
+                    inputs.input_ids, generated_ids, strict=False
+                )
+            ]
+            response = processor.batch_decode(
+                generated_ids_trimmed,
+                skip_special_tokens=True,
+                clean_up_tokenization_spaces=False,
+            )[0]
+
             print(f"Latency: {latency:.2f} seconds")
             print("Cosmos Output:\n", response)
 
@@ -163,7 +170,7 @@ def feed_to_cosmos(world_states, model_id="embedl/Cosmos-Reason2-2B-W4A16", csv_
             csv_writer.writerow([
                 time.strftime("%Y-%m-%d %H:%M:%S"),
                 state['time_window'],
-                prompt,
+                user_msg,
                 response,
                 f"{latency:.4f}"
             ])
